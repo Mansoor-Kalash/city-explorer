@@ -24,4 +24,4 @@ yarn-error.log*
 
 # dotevn Enviroment variabls file
 
-.even
+.env
