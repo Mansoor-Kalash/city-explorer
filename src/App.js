@@ -77,7 +77,6 @@ class App extends React.Component {
             </Card>
           )}
         </>
-         {this.state.errormsg && (<h2 style={{ color: 'red' }} >Something went wrong, check your code ! </h2>)}
 
       </div>
     );
