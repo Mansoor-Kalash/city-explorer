@@ -57,7 +57,7 @@ class App extends React.Component {
 
           {this.state.showData && (
             <Card style={{ width: "18rem" }}>
-              <Card.Img variant="top" src={`https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&center=${this.state.cityData.lat},${this.state.cityData.lon}&zoom=18`}/>
+              <Card.Img variant="top" src={`${process.env.REACT_APP_SERVER_LINK}?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&center=${this.state.cityData.lat},${this.state.cityData.lon}&zoom=18`}/>
               <Card.Body>
                 <Card.Title>{this.state.searchCity}</Card.Title>
               </Card.Body>
