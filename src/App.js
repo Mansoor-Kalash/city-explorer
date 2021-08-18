@@ -30,12 +30,14 @@ class App extends React.Component {
     let resultData = await axios.get(locURL);
     let wData = await axios.get( `${process.env.REACT_APP_SERVER_LINK}/getweather?cityName=${this.state.searchCity}`);
     console.log(wData.data);
+    console.log(wData.data.data);
+
     
 
     await this.setState({
       cityData: resultData.data[0],
       showData: true,
-      weatherData:wData.data,
+      weatherData:wData.data.data,
     });
   };
 
@@ -67,14 +69,14 @@ class App extends React.Component {
           )}
         </>
         <>
-        {this.state.showList && this.state.weatherData.data.map((element, idx) => {
+        {this.state.weatherData.map((element, idx) => {
             return (
         <Card key={idx}>
         <ListGroup>
-        <ListGroupItem>{" "}{this.state.showData && (<p>Lon: {element.datetime}{" "}</p>)}</ListGroupItem>
-        <ListGroupItem>{" "}{this.state.showData && (<p>Lon: {element.weather.description}{" "}</p>)}</ListGroupItem>
-        <ListGroupItem>{" "}{this.state.showData && (<p>Lon: {element.app_max_temp}{" "}</p>)}</ListGroupItem>
-        <ListGroupItem>{" "}{this.state.showData && (<p>Lon: {element.app_min_temp}{" "}</p>)}</ListGroupItem>
+        <ListGroupItem> {element.datetime}</ListGroupItem>
+        <ListGroupItem> {element.weather.description}</ListGroupItem>
+        <ListGroupItem> {element.app_max_temp}</ListGroupItem>
+        <ListGroupItem> {element.app_min_temp}</ListGroupItem>
         </ListGroup>
         </Card>
         );})}
