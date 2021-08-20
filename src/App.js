@@ -93,7 +93,7 @@ class App extends React.Component {
           })}
         </>
 
-        {/* <>
+        <>
           {this.state.weatherData.map((element, idx) => {
             return (
               <Card key={idx}>
@@ -106,7 +106,7 @@ class App extends React.Component {
               </Card>
             );
           })}
-        </> */}
+        </> 
       </div>
     );
   }
