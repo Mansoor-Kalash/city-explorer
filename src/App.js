@@ -17,6 +17,7 @@ class App extends React.Component {
       map: "",
       weatherData: [],
       weather5days:[],
+      moviesData :[],
     };
   }
 
@@ -38,6 +39,14 @@ class App extends React.Component {
 
     let lab8weather = await axios.get(`${process.env.REACT_APP_SERVER_LINK}/weather?cityName=${this.state.searchCity}`);
 
+    let lab8movies = await axios.get(`${process.env.REACT_APP_SERVER_LINK}/movies?moviName=${this.state.searchCity}`);
+    console.log(lab8movies.data);
+
+
+    
+
+    
+    
 
 
 
@@ -47,8 +56,11 @@ class App extends React.Component {
       showData: true,
       weatherData: wData.data.data,
       weather5days: lab8weather.data,
+      moviesData : lab8movies.data,
     });
     console.log('55555555',this.state.weather5days);
+    console.log('55555555',this.state.moviesData);
+
   };
 
   render() {
@@ -94,14 +106,17 @@ class App extends React.Component {
         </>
 
         <>
-          {this.state.weatherData.map((element, idx) => {
+          {this.state.moviesData.map((element, idx) => {
             return (
               <Card key={idx}>
+                <Card.Img  src={`https://image.tmdb.org/t/p/w500/${element.poster_path}`} />
+
                 <ListGroup>
-                  <ListGroupItem> {element.datetime}</ListGroupItem>
-                  <ListGroupItem> {element.weather.description}</ListGroupItem>
-                  <ListGroupItem> {element.app_max_temp}</ListGroupItem>
-                  <ListGroupItem> {element.app_min_temp}</ListGroupItem>
+                  <ListGroupItem> {element.title}</ListGroupItem>
+                  <ListGroupItem> {element.overview}</ListGroupItem>
+                  <ListGroupItem> {element.vote_average}</ListGroupItem>
+                  <ListGroupItem> {element.popularity}</ListGroupItem>
+                  <ListGroupItem> {element.release_date}</ListGroupItem>
                 </ListGroup>
               </Card>
             );
