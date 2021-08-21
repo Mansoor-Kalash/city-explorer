@@ -6,6 +6,9 @@ import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import ListGroupItem from "react-bootstrap/ListGroupItem";
+import  Movies from "./component/Movies";
+import  Weathers from "./component/Weathers";
+
 
 class App extends React.Component {
   constructor(props) {
@@ -18,6 +21,7 @@ class App extends React.Component {
       weatherData: [],
       weather5days:[],
       moviesData :[],
+      errorMsg: false,
     };
   }
 
@@ -27,29 +31,17 @@ class App extends React.Component {
     await this.setState({
       searchCity: e.target.city.value,
     });
-    //lab 06
-    let locURL = `https://eu1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.searchCity}&format=json`;
-    let resultData = await axios.get(locURL);
+    try {
+      //lab 06
+    let resultData =await axios.get( `https://eu1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.searchCity}&format=json`);
     // lab 07
     let wData = await axios.get(`${process.env.REACT_APP_SERVER_LINK}/getweather?cityName=${this.state.searchCity}`);
-    console.log(wData.data);
-    console.log(wData.data.data);
 
     // lab 08
 
     let lab8weather = await axios.get(`${process.env.REACT_APP_SERVER_LINK}/weather?cityName=${this.state.searchCity}`);
 
     let lab8movies = await axios.get(`${process.env.REACT_APP_SERVER_LINK}/movies?moviName=${this.state.searchCity}`);
-    console.log(lab8movies.data);
-
-
-    
-
-    
-    
-
-
-
 
     await this.setState({
       cityData: resultData.data[0],
@@ -57,16 +49,26 @@ class App extends React.Component {
       weatherData: wData.data.data,
       weather5days: lab8weather.data,
       moviesData : lab8movies.data,
+      errorMsg : false,
     });
-    console.log('55555555',this.state.weather5days);
-    console.log('55555555',this.state.moviesData);
 
+    } catch (error) {
+      await this.setState({
+        cityData: {},
+        showData: false,
+        weatherData: [],
+        weather5days: [],
+        moviesData : [],
+        errorMsg : true,
+      });
+    }
+    
   };
 
   render() {
     return (
       <div>
-        <>
+        
           <Form onSubmit={this.getLocation}>
             <Form.Group>
               <Form.Label>City</Form.Label>
@@ -89,39 +91,27 @@ class App extends React.Component {
               </ListGroup>
             </Card>
           )}
-        </>
-        <>
-          {this.state.weatherData.map((element, idx) => {
-            return (
-              <Card key={idx}>
-                <ListGroup>
-                  <ListGroupItem> {element.datetime}</ListGroupItem>
-                  <ListGroupItem> {element.weather.description}</ListGroupItem>
-                  <ListGroupItem> {element.app_max_temp}</ListGroupItem>
-                  <ListGroupItem> {element.app_min_temp}</ListGroupItem>
-                </ListGroup>
-              </Card>
-            );
-          })}
-        </>
+        
+        
+        {this.state.showData && <Weathers show= {this.state.showData} weatherData={this.state.weatherData}/>}
+        
 
-        <>
-          {this.state.moviesData.map((element, idx) => {
-            return (
-              <Card key={idx}>
-                <Card.Img  src={`https://image.tmdb.org/t/p/w500/${element.poster_path}`} />
+       
+         
+              {this.state.showData && <Movies show= {this.state.showData} moviesData={this.state.moviesData}/>}
+           
+         
+        
+        {
+            this.state.errorMsg &&
 
-                <ListGroup>
-                  <ListGroupItem> {element.title}</ListGroupItem>
-                  <ListGroupItem> {element.overview}</ListGroupItem>
-                  <ListGroupItem> {element.vote_average}</ListGroupItem>
-                  <ListGroupItem> {element.popularity}</ListGroupItem>
-                  <ListGroupItem> {element.release_date}</ListGroupItem>
-                </ListGroup>
-              </Card>
-            );
-          })}
-        </> 
+
+            <div role="alert">
+              <strong>Error!something doesn't work out </strong>
+              
+            </div>
+
+          }
       </div>
     );
   }
