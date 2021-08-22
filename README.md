@@ -4,6 +4,7 @@
 ## Overview
 
 City explorer is an application used to give the client longitude and latitude in addition a map of the selectedserver
+and movise thats name of it contain the name of the city
 ## Getting Started
 just enter the name of the city you want it.
 
