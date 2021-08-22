@@ -19,10 +19,10 @@ For each of the lab features, make an estimate of the time it will take you to c
 
 Name of feature: ____________request and response____________________
 
-Estimate of time needed to complete: __3 hours___
+Estimate of time needed to complete: __4 hours___
 
 Start time: __3 pm___
 
-Finish time: ___3 am__
+Finish time: ___8pm__
 
-Actual time needed to complete: __5 hours___
+Actual time needed to complete: __ 4 hours___
