@@ -6,6 +6,8 @@ import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import ListGroupItem from "react-bootstrap/ListGroupItem";
+import Movies from "./component/Movies";
+import Weathers from "./component/Weathers";
 
 class App extends React.Component {
   constructor(props) {
@@ -15,7 +17,10 @@ class App extends React.Component {
       searchCity: "",
       showData: false,
       map: "",
-      weatherData:[],
+      weatherData: [],
+      weather5days: [],
+      moviesData: [],
+      errorMsg: false,
     };
   }
 
@@ -25,62 +30,100 @@ class App extends React.Component {
     await this.setState({
       searchCity: e.target.city.value,
     });
+    try {
+      //lab 06
+      let resultData = await axios.get(
+        `https://eu1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.searchCity}&format=json`
+      );
+      // lab 07
+      let wData = await axios.get(
+        `${process.env.REACT_APP_SERVER_LINK}/getweather?cityName=${this.state.searchCity}`
+      );
 
-    let locURL = `https://eu1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.searchCity}&format=json`;
-    let resultData = await axios.get(locURL);
-    let wData = await axios.get( `${process.env.REACT_APP_SERVER_LINK}/getweather?cityName=${this.state.searchCity}`);
-    console.log(wData.data);
-    console.log(wData.data.data);
+      // lab 08
 
-    
+      let lab8weather = await axios.get(
+        `${process.env.REACT_APP_SERVER_LINK}/weather?cityName=${this.state.searchCity}`
+      );
 
-    await this.setState({
-      cityData: resultData.data[0],
-      showData: true,
-      weatherData:wData.data.data,
-    });
+      let lab8movies = await axios.get(
+        `${process.env.REACT_APP_SERVER_LINK}/movies?moviName=${this.state.searchCity}`
+      );
+
+      await this.setState({
+        cityData: resultData.data[0],
+        showData: true,
+        weatherData: wData.data.data,
+        weather5days: lab8weather.data,
+        moviesData: lab8movies.data,
+        errorMsg: false,
+      });
+    } catch (error) {
+      await this.setState({
+        cityData: {},
+        showData: false,
+        weatherData: [],
+        weather5days: [],
+        moviesData: [],
+        errorMsg: true,
+      });
+    }
   };
 
   render() {
     return (
       <div>
-        <>
-          <Form onSubmit={this.getLocation}>
-            <Form.Group>
-              <Form.Label>City</Form.Label>
-              <Form.Control type="text" placeholder="city name" name="city" />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              Submit
-            </Button>
-          </Form>
+        <Form onSubmit={this.getLocation}>
+          <Form.Group>
+            <Form.Label>City</Form.Label>
+            <Form.Control type="text" placeholder="city name" name="city" />
+          </Form.Group>
+          <Button variant="primary" type="submit">
+            Submit
+          </Button>
+        </Form>
 
-          {this.state.showData && (
-            <Card style={{ width: "18rem" }}>
-              <Card.Img variant="top" src={`${process.env.REACT_APP_SERVER_LINK}?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&center=${this.state.cityData.lat},${this.state.cityData.lon}&zoom=18`}/>
-              <Card.Body>
-                <Card.Title>{this.state.searchCity}</Card.Title>
-              </Card.Body>
-              <ListGroup className="list-group-flush">
-                <ListGroupItem>{" "}{this.state.showData && <p>Lat:{this.state.cityData.lat} </p>}</ListGroupItem>
-                <ListGroupItem>{" "}{this.state.showData && (<p>Lon:{this.state.cityData.lon}{" "}</p>)}</ListGroupItem>
-              </ListGroup>
-            </Card>
-          )}
-        </>
-        <>
-        {this.state.weatherData.map((element, idx) => {
-            return (
-        <Card key={idx}>
-        <ListGroup>
-        <ListGroupItem> {element.datetime}</ListGroupItem>
-        <ListGroupItem> {element.weather.description}</ListGroupItem>
-        <ListGroupItem> {element.app_max_temp}</ListGroupItem>
-        <ListGroupItem> {element.app_min_temp}</ListGroupItem>
-        </ListGroup>
-        </Card>
-        );})}
-        </>
+        {this.state.showData && (
+          <Card style={{ width: "18rem" }}>
+            <Card.Img
+              variant="top"
+              src={`https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&center=${this.state.cityData.lat},${this.state.cityData.lon}&zoom=18`}
+            />
+            <Card.Body>
+              <Card.Title>{this.state.searchCity}</Card.Title>
+            </Card.Body>
+            <ListGroup className="list-group-flush">
+              <ListGroupItem>
+                {" "}
+                {this.state.showData && <p>Lat:{this.state.cityData.lat} </p>}
+              </ListGroupItem>
+              <ListGroupItem>
+                {" "}
+                {this.state.showData && <p>Lon:{this.state.cityData.lon} </p>}
+              </ListGroupItem>
+            </ListGroup>
+          </Card>
+        )}
+
+        {this.state.showData && (
+          <Weathers
+            show={this.state.showData}
+            weatherData={this.state.weatherData}
+          />
+        )}
+
+        {this.state.showData && (
+          <Movies
+            show={this.state.showData}
+            moviesData={this.state.moviesData}
+          />
+        )}
+
+        {this.state.errorMsg && (
+          <div role="alert">
+            <strong>Error!something doesn't work out </strong>
+          </div>
+        )}
       </div>
     );
   }
